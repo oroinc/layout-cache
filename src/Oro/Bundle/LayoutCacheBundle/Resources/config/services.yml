@@ -1,0 +1,101 @@
+services:
+  oro.layout_cache.cache_provider:
+    parent: oro.cache.abstract
+    calls:
+      - [ setNamespace, [ 'oro_layout_render_cache' ] ]
+
+  oro.layout_cache.tag_aware_cache_adapter:
+    class: Symfony\Component\Cache\Adapter\TagAwareAdapter
+    arguments:
+      - '@cache.oro_layout.render'
+
+  oro.layout_cache.block_type_extension:
+    class: Oro\Bundle\LayoutCacheBundle\Layout\Extension\CacheBlockTypeExtension
+    tags:
+      - {name: layout.block_type_extension,  alias: block, priority: 256}
+
+  oro.layout_cache.render_cache:
+    class: Oro\Bundle\LayoutCacheBundle\Cache\RenderCache
+    arguments:
+      - '@oro.layout_cache.tag_aware_cache_adapter'
+      - '@oro.layout_cache.metadata_provider'
+      - '@request_stack'
+      - !tagged layout_cache.extension
+
+  oro.layout_cache.twig_renderer.decorator:
+    decorates: oro_layout.twig.renderer
+    class: Oro\Bundle\LayoutCacheBundle\Layout\CacheTwigRendererDecorator
+    arguments:
+      - '@oro.layout_cache.twig_renderer.decorator.inner'
+      - '@oro.layout_cache.render_cache'
+      - '@oro.layout_cache.placeholder_renderer'
+      - '@logger'
+    tags:
+      - { name: monolog.logger, channel: oro_layout_cache }
+
+  oro.layout_cache.layout_factory_builder.decorator:
+    class: Oro\Bundle\LayoutCacheBundle\Layout\LayoutFactoryBuilderDecorator
+    decorates: oro_layout.layout_factory_builder
+    arguments:
+      - '@oro.layout_cache.layout_factory_builder.decorator.inner'
+      - '@oro.layout_cache.render_cache'
+      - '@oro.layout_cache.metadata_provider'
+      - '@oro_layout.processor.expression'
+      - '@oro_layout.cache.block_view_cache'
+      - '%kernel.debug%'
+
+  oro.layout_cache.processor.expression.decorator:
+    decorates: oro_layout.processor.expression
+    class: Oro\Bundle\LayoutCacheBundle\Layout\CacheExpressionProcessor
+    arguments:
+      - '@oro_layout.expression_language'
+      - '@oro_layout.expression.encoder_registry'
+      - '@oro.layout_cache.render_cache'
+
+  oro.layout_cache.layout_renderer.decorator:
+    decorates: oro_layout.twig.layout_renderer
+    class: Oro\Bundle\LayoutCacheBundle\Layout\LayoutRendererDecorator
+    arguments:
+      - '@oro.layout_cache.layout_renderer.decorator.inner'
+      - '@oro.layout_cache.placeholder_renderer'
+
+  oro.layout_cache.extension.localization:
+    class: Oro\Bundle\LayoutCacheBundle\Cache\Extension\LocalizationRenderCacheExtension
+    arguments:
+      - '@oro_locale.provider.current_localization'
+    tags: [layout_cache.extension]
+
+  oro.layout_cache.extension.theme:
+    class: Oro\Bundle\LayoutCacheBundle\Cache\Extension\ThemeRenderCacheExtension
+    arguments:
+      - '@oro_layout.layout_context_holder'
+    tags: [layout_cache.extension]
+
+  oro.layout_cache.extension.website:
+    class: Oro\Bundle\LayoutCacheBundle\Cache\Extension\WebsiteRenderCacheExtension
+    arguments:
+      - '@oro_website.manager'
+    tags: [layout_cache.extension]
+
+  oro.layout_cache.metadata_provider.default:
+    class: Oro\Bundle\LayoutCacheBundle\Cache\Metadata\DefaultCacheMetadataProvider
+
+  oro.layout_cache.metadata_provider:
+    class: Oro\Bundle\LayoutCacheBundle\Cache\Metadata\CacheMetadataProvider
+    arguments:
+      - '@oro.layout_cache.metadata_provider.default'
+      - !tagged layout_cache.metadata_provider
+      - '@oro_layout.layout_context_holder'
+      - '@logger'
+      - '%kernel.debug%'
+    tags:
+      - { name: monolog.logger, channel: oro_layout_cache }
+
+  oro.layout_cache.placeholder_renderer:
+    class: Oro\Bundle\LayoutCacheBundle\Cache\PlaceholderRenderer
+    arguments:
+      - '@oro_layout.layout_manager'
+      - '@oro_layout.layout_context_holder'
+      - '@logger'
+    tags:
+      - { name: monolog.logger, channel: oro_layout_cache }
