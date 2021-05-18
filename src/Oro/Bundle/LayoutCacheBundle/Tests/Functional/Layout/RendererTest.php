@@ -234,7 +234,7 @@ class RendererTest extends LayoutTestCase
 
         // render
         $this->assertHtmlEquals(
-            <<<HTML
+            '
 <first_level>
 ORIGINAL TEXT.ORIGINAL TEXT.ORIGINAL TEXT.<second_level>
 <third_level>
@@ -244,14 +244,14 @@ ORIGINAL TEXT.ORIGINAL TEXT.ORIGINAL TEXT.ORIGINAL TEXT.
 </third_level>
 </second_level>
 </first_level>
-HTML,
+',
             $this->renderLayout()
         );
 
         // render with updated data
         $this->context->data()->set('text', 'UPDATED TEXT.');
         $this->assertHtmlEquals(
-            <<<HTML
+            '
 <first_level>
 UPDATED TEXT.UPDATED TEXT.ORIGINAL TEXT.<second_level>
 <third_level>
@@ -261,7 +261,7 @@ ORIGINAL TEXT.UPDATED TEXT.ORIGINAL TEXT.UPDATED TEXT.
 </third_level>
 </second_level>
 </first_level>
-HTML,
+',
             $this->renderLayout()
         );
     }
@@ -297,7 +297,7 @@ HTML,
 
         // render
         $this->assertHtmlEquals(
-            <<<'HTML'
+            '
 <ol>
 <li>
 FIRST ORIGINAL.</li>
@@ -306,14 +306,14 @@ SECOND ORIGINAL.</li>
 <li>
 THIRD ORIGINAL.</li>
 </ol>
-HTML,
+',
             $this->renderLayout()
         );
         // render with updated data, except varyBy
         $this->context->data()->set('second', 'SECOND UPDATED.');
         $this->context->data()->set('third', 'THIRD UPDATED.');
         $this->assertHtmlEquals(
-            <<<'HTML'
+            '
 <ol>
 <li>
 FIRST ORIGINAL.</li>
@@ -322,14 +322,14 @@ SECOND ORIGINAL.</li>
 <li>
 THIRD ORIGINAL.</li>
 </ol>
-HTML,
+',
             $this->renderLayout()
         );
 
         // render with updated varyBy data
         $this->context->data()->set('first', 'FIRST UPDATED.');
         $this->assertHtmlEquals(
-            <<<'HTML'
+            '
 <ol>
 <li>
 FIRST UPDATED.</li>
@@ -338,7 +338,7 @@ SECOND UPDATED.</li>
 <li>
 THIRD UPDATED.</li>
 </ol>
-HTML,
+',
             $this->renderLayout()
         );
     }
