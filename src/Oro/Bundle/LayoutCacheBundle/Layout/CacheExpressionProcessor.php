@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\LayoutCacheBundle\Layout;
 
-use InvalidArgumentException;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataAccessorInterface;
 use Oro\Component\Layout\ExpressionLanguage\ExpressionProcessor;
@@ -32,7 +31,7 @@ class CacheExpressionProcessor extends ExpressionProcessor
             return;
         }
         if (isset($values['data']) || isset($values['context'])) {
-            throw new InvalidArgumentException('"data" and "context" should not be used as value keys.');
+            throw new \InvalidArgumentException('"data" and "context" should not be used as value keys.');
         }
         $this->values = $values;
         $this->processingValues = [];
@@ -46,10 +45,10 @@ class CacheExpressionProcessor extends ExpressionProcessor
         $this->cached = array_key_exists('_cached', $values) && $values['_cached'];
 
         foreach ($values as $key => $value) {
-            if (!array_key_exists($key, $this->processedValues)) {
-                $this->processRootValue($key, $value, $context, $data, $evaluate, $encoding);
-            } else {
+            if (array_key_exists($key, $this->processedValues)) {
                 $value = $this->processedValues[$key];
+            } else {
+                $this->processRootValue($key, $value, $context, $data, $evaluate, $encoding);
             }
             $values[$key] = $value;
         }
@@ -70,5 +69,14 @@ class CacheExpressionProcessor extends ExpressionProcessor
         }
 
         return parent::processExpression($expr, $context, $data, $evaluate, $encoding);
+    }
+
+    protected function processClosure(\Closure $value, ContextInterface $context, ?DataAccessorInterface $data)
+    {
+        if (true === $this->cached) {
+            return null;
+        }
+
+        return parent::processClosure($value, $context, $data);
     }
 }
