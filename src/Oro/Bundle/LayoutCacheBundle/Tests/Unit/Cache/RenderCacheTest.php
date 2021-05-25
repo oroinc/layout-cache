@@ -87,7 +87,7 @@ class RenderCacheTest extends TestCase
         $blockView = new BlockView();
         $blockView->vars['id'] = 'block_id';
         $layoutCacheMetadata = new LayoutCacheMetadata();
-        $this->metadataProvider->expects($this->exactly(2))
+        $this->metadataProvider->expects($this->exactly(3))
             ->method('getCacheMetadata')
             ->with($blockView)
             ->willReturn($layoutCacheMetadata);
@@ -96,12 +96,17 @@ class RenderCacheTest extends TestCase
         $cacheItem->expects($this->once())
             ->method('isHit')
             ->willReturn(true);
+        $cacheItem->expects($this->any())
+            ->method('getKey')
+            ->willReturn('block_id');
 
         $this->cache->expects($this->once())
             ->method('getItem')
             ->willReturn($cacheItem);
 
         $this->assertTrue($this->renderCache->isCached($blockView));
+        // fetch item after isCached must not trigger additional calls of the cache
+        $this->renderCache->getItem($blockView);
     }
 
     public function testGetItem(): void
