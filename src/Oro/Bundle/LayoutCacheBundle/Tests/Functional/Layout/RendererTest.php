@@ -5,6 +5,7 @@ namespace Oro\Bundle\LayoutCacheBundle\Tests\Functional\Layout;
 use Oro\Bundle\LayoutBundle\Layout\LayoutManager;
 use Oro\Bundle\LayoutBundle\Tests\Functional\LayoutTestCase;
 use Oro\Bundle\LayoutCacheBundle\Layout\CacheLayoutBuilder;
+use Oro\Component\Layout\Layout;
 use Oro\Component\Layout\LayoutContext;
 use stdClass;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
@@ -486,16 +487,115 @@ THIRD UPDATED.</li>
         ];
     }
 
-    /**
-     * @return string
-     */
-    private function renderLayout(): string
+    public function testCacheInvalidationDuringRequest()
+    {
+        $this->cache->clear();
+        $this->context->data()->set('text', 'ORIGINAL TEXT.');
+        // layout context must be unique for each test, otherwise layout tree is cached and new options are not applied
+        $this->context->set('route_name', 'layout_cache:invalidation_during_request'.rand(0, 4903943094));
+
+        $this->layoutManager->getLayoutBuilder()
+            ->add('root', null, 'container')
+            ->add('first_level', 'root', 'container', ['cache' => true])
+            ->add(
+                'second_level_not_cached_1',
+                'first_level',
+                'text',
+                ['text' => '=data["text"]', 'cache' => ['maxAge' => 0]]
+            )
+            ->add(
+                'second_level_not_cached_2',
+                'first_level',
+                'text',
+                ['text' => '=data["text"]', 'cache' => ['maxAge' => 0]]
+            )
+            ->add('second_level_cached', 'first_level', 'text', ['text' => '=data["text"]', 'cache' => true])
+            ->add('second_level', 'first_level', 'container')
+            ->add('third_level', 'second_level', 'container')
+            ->add('fourth_level', 'third_level', 'container')
+            ->add('fifth_level_regular', 'fourth_level', 'text', ['text' => '=data["text"]'])
+            ->add(
+                'fifth_level_not_cached_1',
+                'fourth_level',
+                'text',
+                ['text' => '=data["text"]', 'cache' => ['maxAge' => 0]]
+            )
+            ->add('fifth_level_cached', 'fourth_level', 'text', ['text' => '=data["text"]', 'cache' => true])
+            ->add(
+                'fifth_level_not_cached_2',
+                'fourth_level',
+                'text',
+                ['text' => '=data["text"]', 'cache' => ['maxAge' => 0]]
+            )
+            ->getLayout($this->context);
+
+        // render with the empty cache
+        $this->assertHtmlEquals(
+            '
+<first_level>
+ORIGINAL TEXT.ORIGINAL TEXT.ORIGINAL TEXT.<second_level>
+<third_level>
+<fourth_level>
+ORIGINAL TEXT.ORIGINAL TEXT.ORIGINAL TEXT.ORIGINAL TEXT.
+</fourth_level>
+</third_level>
+</second_level>
+</first_level>
+',
+            $this->renderLayout()
+        );
+
+        // render with updated data
+        $this->context->data()->set('text', 'UPDATED TEXT.');
+
+        $layout = $this->buildLayout();
+        // clear the cache after the layout is build, and before it's rendered in the same request
+        $this->cache->clear();
+        $this->assertHtmlEquals(
+            '
+<first_level>
+UPDATED TEXT.UPDATED TEXT.UPDATED TEXT.<second_level>
+<third_level>
+<fourth_level>
+ORIGINAL TEXT.UPDATED TEXT.UPDATED TEXT.UPDATED TEXT.
+</fourth_level>
+</third_level>
+</second_level>
+</first_level>
+',
+            $layout->render()
+        );
+
+        // render one more time with updated data and fresh cache
+        $this->assertHtmlEquals(
+            '
+<first_level>
+UPDATED TEXT.UPDATED TEXT.UPDATED TEXT.<second_level>
+<third_level>
+<fourth_level>
+UPDATED TEXT.UPDATED TEXT.UPDATED TEXT.UPDATED TEXT.
+</fourth_level>
+</third_level>
+</second_level>
+</first_level>
+',
+            $this->renderLayout()
+        );
+    }
+
+    private function buildLayout(): Layout
     {
         return $this->layoutManager->getLayoutBuilder()
             // no need to add all the blocks again, because the layout tree is cached by context
             ->add('root', null, 'container')
             ->getLayout($this->context)
-            ->setBlockTheme(self::BLOCK_THEME)
-            ->render();
+            ->setBlockTheme(self::BLOCK_THEME);
+    }
+
+    private function renderLayout(): string
+    {
+        $layout = $this->buildLayout();
+
+        return $layout->render();
     }
 }

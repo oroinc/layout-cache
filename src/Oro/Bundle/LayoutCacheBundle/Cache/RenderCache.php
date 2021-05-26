@@ -43,6 +43,11 @@ class RenderCache
     private $metadataProvider;
 
     /**
+     * @var CacheItemInterface[]
+     */
+    private $fetchedItems = [];
+
+    /**
      * @param TagAwareAdapterInterface                 $cache
      * @param CacheMetadataProvider                    $metadataProvider
      * @param RequestStack                             $requestStack
@@ -87,6 +92,9 @@ class RenderCache
         }
 
         $item = $this->getItem($blockView);
+        // prevents isCached and getItem from returning inconsistent result, when isCached returns true but on getItem
+        // call it's already expired
+        $this->fetchedItems[$item->getKey()] = $item;
 
         return $item->isHit();
     }
@@ -105,6 +113,15 @@ class RenderCache
             );
         }
         $cacheKey = $this->createCacheKey($blockView->getId(), $metadata);
+
+        if (isset($this->fetchedItems[$cacheKey])) {
+            $cacheItem = $this->fetchedItems[$cacheKey];
+            // clear the local cache, as the consistency is needed only between isCached and getItem calls,
+            // multiple calls of getItem must return fresh results
+            unset($this->fetchedItems[$cacheKey]);
+
+            return $cacheItem;
+        }
 
         return $this->cache->getItem($cacheKey);
     }
