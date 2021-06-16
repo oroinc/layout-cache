@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class RendererTest extends LayoutTestCase
 {
-    private const BLOCK_THEME = __DIR__.'/templates/test_block_theme.html.twig';
+    private const BLOCK_THEME = '@OroLayoutCacheBundleStub/templates/test_block_theme.html.twig';
     private const MAX_AGE = 2;
 
     /**
