@@ -14,9 +14,6 @@ class WebsiteRenderCacheExtension implements RenderCacheExtensionInterface
      */
     private $websiteManager;
 
-    /**
-     * @param WebsiteManager $websiteManager
-     */
     public function __construct(WebsiteManager $websiteManager)
     {
         $this->websiteManager = $websiteManager;

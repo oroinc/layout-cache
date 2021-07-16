@@ -49,14 +49,6 @@ class LayoutFactoryBuilderDecorator implements LayoutFactoryBuilderInterface
      */
     private $cacheMetadataProvider;
 
-    /**
-     * @param LayoutFactoryBuilderInterface $inner
-     * @param RenderCache                   $renderCache
-     * @param CacheMetadataProvider         $cacheMetadataProvider
-     * @param ExpressionProcessor           $expressionProcessor
-     * @param BlockViewCache|null           $blockViewCache
-     * @param bool                          $debug
-     */
     public function __construct(
         LayoutFactoryBuilderInterface $inner,
         RenderCache $renderCache,
@@ -148,9 +140,6 @@ class LayoutFactoryBuilderDecorator implements LayoutFactoryBuilderInterface
         );
     }
 
-    /**
-     * @return BlockViewCache|null
-     */
     private function getBlockViewCache(): ?BlockViewCache
     {
         return $this->debug === false ? $this->blockViewCache : null;

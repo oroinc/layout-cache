@@ -21,10 +21,6 @@ class LayoutRendererDecorator implements LayoutRendererInterface
      */
     private $placeholderRenderer;
 
-    /**
-     * @param LayoutRendererInterface $inner
-     * @param PlaceholderRenderer     $placeholderRenderer
-     */
     public function __construct(
         LayoutRendererInterface $inner,
         PlaceholderRenderer $placeholderRenderer

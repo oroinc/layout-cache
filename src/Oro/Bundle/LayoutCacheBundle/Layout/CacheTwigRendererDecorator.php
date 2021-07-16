@@ -49,12 +49,6 @@ class CacheTwigRendererDecorator implements TwigRendererInterface
      */
     private $logger;
 
-    /**
-     * @param TwigRendererInterface $renderer
-     * @param RenderCache           $renderCache
-     * @param PlaceholderRenderer   $placeholderRenderer
-     * @param LoggerInterface       $logger
-     */
     public function __construct(
         TwigRendererInterface $renderer,
         RenderCache $renderCache,
@@ -165,11 +159,6 @@ class CacheTwigRendererDecorator implements TwigRendererInterface
         return $this->inner->setEnvironment($environment);
     }
 
-    /**
-     * @param CacheItem           $item
-     * @param string              $html
-     * @param LayoutCacheMetadata $metadata
-     */
     private function saveCacheItem(CacheItem $item, string $html, LayoutCacheMetadata $metadata): void
     {
         if (0 !== $metadata->getMaxAge()) {
@@ -186,11 +175,6 @@ class CacheTwigRendererDecorator implements TwigRendererInterface
         }
     }
 
-    /**
-     * @param string $blockId
-     * @param string $html
-     * @return string
-     */
     private function handlePlaceholders(string $blockId, string $html): string
     {
         $this->cachedBlockNestingLevel--;

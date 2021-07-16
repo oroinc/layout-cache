@@ -14,9 +14,6 @@ class LocalizationRenderCacheExtension implements RenderCacheExtensionInterface
      */
     private $currentLocalizationProvider;
 
-    /**
-     * @param CurrentLocalizationProvider $currentLocalizationProvider
-     */
     public function __construct(CurrentLocalizationProvider $currentLocalizationProvider)
     {
         $this->currentLocalizationProvider = $currentLocalizationProvider;

@@ -58,8 +58,6 @@ class RenderCacheTest extends TestCase
 
     /**
      * @dataProvider isEnabledProvider
-     * @param string $httpMethod
-     * @param bool   $enabled
      */
     public function testIsEnabled(string $httpMethod, bool $enabled): void
     {
@@ -67,9 +65,6 @@ class RenderCacheTest extends TestCase
         $this->assertEquals($enabled, $this->renderCache->isEnabled());
     }
 
-    /**
-     * @return array
-     */
     public function isEnabledProvider(): array
     {
         return [

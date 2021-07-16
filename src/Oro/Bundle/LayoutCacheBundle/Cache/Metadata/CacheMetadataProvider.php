@@ -78,10 +78,6 @@ class CacheMetadataProvider implements ResetInterface
         return $this->metadataByBlockCacheKey[$blockCacheKey];
     }
 
-    /**
-     * @param BlockView $blockView
-     * @return LayoutCacheMetadata|null
-     */
     private function doGetMetadata(BlockView $blockView): ?LayoutCacheMetadata
     {
         $context = $this->contextHolder->getContext();

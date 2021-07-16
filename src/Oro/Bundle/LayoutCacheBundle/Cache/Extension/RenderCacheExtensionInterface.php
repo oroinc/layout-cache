@@ -7,8 +7,5 @@ namespace Oro\Bundle\LayoutCacheBundle\Cache\Extension;
  */
 interface RenderCacheExtensionInterface
 {
-    /**
-     * @return array
-     */
     public function alwaysVaryBy(): array;
 }

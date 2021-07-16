@@ -34,12 +34,6 @@ class LayoutFactoryDecorator implements LayoutFactoryInterface
      */
     private $renderCache;
 
-    /**
-     * @param LayoutFactoryInterface $inner
-     * @param ExpressionProcessor    $expressionProcessor
-     * @param RenderCache            $renderCache
-     * @param BlockViewCache|null    $blockViewCache
-     */
     public function __construct(
         LayoutFactoryInterface $inner,
         ExpressionProcessor $expressionProcessor,
