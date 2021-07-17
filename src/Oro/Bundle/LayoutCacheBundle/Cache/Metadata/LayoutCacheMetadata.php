@@ -44,9 +44,6 @@ class LayoutCacheMetadata
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getMaxAge(): ?int
     {
         return $this->maxAge;
@@ -63,18 +60,11 @@ class LayoutCacheMetadata
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getTags(): array
     {
         return $this->tags;
     }
 
-    /**
-     * @param array $tags
-     * @return LayoutCacheMetadata
-     */
     public function setTags(array $tags): LayoutCacheMetadata
     {
         $this->assertArrayOfScalars($tags, 'tags');
@@ -83,10 +73,6 @@ class LayoutCacheMetadata
         return $this;
     }
 
-    /**
-     * @param array  $values
-     * @param string $optionName
-     */
     private function assertArrayOfScalars(array $values, string $optionName): void
     {
         foreach ($values as $key => $value) {

@@ -38,9 +38,6 @@ class DefaultCacheMetadataProviderTest extends TestCase
         $this->assertEquals($expected['maxAge'], $result->getMaxAge());
     }
 
-    /**
-     * @return array
-     */
     public function getCacheMetadataProvider(): array
     {
         return [

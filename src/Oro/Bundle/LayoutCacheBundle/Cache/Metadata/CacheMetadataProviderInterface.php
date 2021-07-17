@@ -12,10 +12,6 @@ interface CacheMetadataProviderInterface
 {
     /**
      * Return cache metadata for the layout block when it must be cached, null otherwise
-     *
-     * @param BlockView        $blockView
-     * @param ContextInterface $context
-     * @return LayoutCacheMetadata|null
      */
     public function getCacheMetadata(BlockView $blockView, ContextInterface $context): ?LayoutCacheMetadata;
 }

@@ -14,9 +14,6 @@ class ThemeRenderCacheExtension implements RenderCacheExtensionInterface
      */
     private $contextHolder;
 
-    /**
-     * @param LayoutContextHolder $contextHolder
-     */
     public function __construct(LayoutContextHolder $contextHolder)
     {
         $this->contextHolder = $contextHolder;

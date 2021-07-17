@@ -65,9 +65,6 @@ class RenderCache
         $this->metadataProvider = $metadataProvider;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -100,8 +97,6 @@ class RenderCache
     }
 
     /**
-     * @param BlockView $blockView
-     * @return CacheItemInterface
      * @throws InvalidArgumentException
      */
     public function getItem(BlockView $blockView): CacheItemInterface
@@ -126,20 +121,11 @@ class RenderCache
         return $this->cache->getItem($cacheKey);
     }
 
-    /**
-     * @param CacheItemInterface $item
-     * @return bool
-     */
     public function save(CacheItemInterface $item): bool
     {
         return $this->cache->save($item);
     }
 
-    /**
-     * @param string              $blockId
-     * @param LayoutCacheMetadata $metadata
-     * @return string
-     */
     private function createCacheKey(string $blockId, LayoutCacheMetadata $metadata): string
     {
         $varyBy = array_merge($this->getAlwaysVaryBy(), $metadata->getVaryBy());
@@ -172,10 +158,6 @@ class RenderCache
         return $this->alwaysVaryBy;
     }
 
-    /**
-     * @param BlockView $blockView
-     * @return LayoutCacheMetadata|null
-     */
     public function getMetadata(BlockView $blockView): ?LayoutCacheMetadata
     {
         return $this->metadataProvider->getCacheMetadata($blockView);

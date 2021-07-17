@@ -78,9 +78,6 @@ class RendererTest extends LayoutTestCase
         $this->assertHtmlEquals('UPDATED TEXT.STATIC TEXT.', $this->renderLayout());
     }
 
-    /**
-     * @return array
-     */
     public function notCachedBlocksProvider(): array
     {
         return [
@@ -145,9 +142,6 @@ class RendererTest extends LayoutTestCase
         $this->assertHtmlEquals('ORIGINAL TEXT.STATIC TEXT.', $this->renderLayout());
     }
 
-    /**
-     * @return array
-     */
     public function cachedBlocksProvider(): array
     {
         return [
@@ -474,9 +468,6 @@ THIRD UPDATED.</li>
         $this->assertHtmlEquals('UPDATED TEXT.STATIC TEXT.', $this->renderLayout());
     }
 
-    /**
-     * @return array
-     */
     public function invalidCacheMetadataProvider(): array
     {
         return [

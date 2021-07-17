@@ -32,11 +32,6 @@ class PlaceholderRenderer implements ResetInterface
      */
     private $renderedPlaceholders = [];
 
-    /**
-     * @param LayoutManager       $layoutManager
-     * @param LayoutContextHolder $contextHolder
-     * @param LoggerInterface     $logger
-     */
     public function __construct(
         LayoutManager $layoutManager,
         LayoutContextHolder $contextHolder,
@@ -47,11 +42,6 @@ class PlaceholderRenderer implements ResetInterface
         $this->logger = $logger;
     }
 
-    /**
-     * @param string $blockId
-     * @param string $html
-     * @return string
-     */
     public function createPlaceholder(string $blockId, string $html): string
     {
         $this->renderedPlaceholders[$blockId] = $html;
@@ -59,19 +49,11 @@ class PlaceholderRenderer implements ResetInterface
         return $this->getPlaceholder($blockId);
     }
 
-    /**
-     * @param string $blockId
-     * @return string
-     */
     private function getPlaceholder(string $blockId): string
     {
         return '<!-- PLACEHOLDER '.$blockId.' -->';
     }
 
-    /**
-     * @param string $html
-     * @return string
-     */
     public function renderPlaceholders(string $html): string
     {
         $blockIds = $this->getPlaceholderBlockIds($html);
@@ -102,10 +84,6 @@ class PlaceholderRenderer implements ResetInterface
         return $matches[1];
     }
 
-    /**
-     * @param string $blockId
-     * @return string
-     */
     private function renderPlaceholderContent(string $blockId): string
     {
         if (isset($this->renderedPlaceholders[$blockId])) {

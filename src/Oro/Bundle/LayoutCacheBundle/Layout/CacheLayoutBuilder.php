@@ -26,16 +26,6 @@ class CacheLayoutBuilder extends LayoutBuilder
      */
     private $renderCache;
 
-    /**
-     * @param LayoutRegistryInterface            $registry
-     * @param RawLayoutBuilderInterface          $rawLayoutBuilder
-     * @param DeferredLayoutManipulatorInterface $layoutManipulator
-     * @param BlockFactoryInterface              $blockFactory
-     * @param LayoutRendererRegistryInterface    $rendererRegistry
-     * @param ExpressionProcessor                $expressionProcessor
-     * @param RenderCache                        $renderCache
-     * @param BlockViewCache|null                $blockViewCache
-     */
     public function __construct(
         LayoutRegistryInterface $registry,
         RawLayoutBuilderInterface $rawLayoutBuilder,
@@ -125,9 +115,6 @@ class CacheLayoutBuilder extends LayoutBuilder
         return $cached;
     }
 
-    /**
-     * @param BlockView $view
-     */
     protected function buildValueBags(BlockView $view)
     {
         array_walk_recursive(
