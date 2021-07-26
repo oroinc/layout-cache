@@ -9,6 +9,12 @@ services:
     tags:
       - {name: layout.block_type_extension,  alias: block, priority: 256}
 
+  oro.layout_cache.block_view_serializer.cache_block_view_vars_normalizer:
+    class: Oro\Bundle\LayoutCacheBundle\Layout\Serializer\CacheBlockViewVarsNormalizer
+    decorates: oro_layout.block_view_serializer.block_view_vars_normalizer
+    arguments:
+      - '@oro.layout_cache.block_view_serializer.cache_block_view_vars_normalizer.inner'
+
   oro.layout_cache.render_cache:
     class: Oro\Bundle\LayoutCacheBundle\Cache\RenderCache
     arguments:
