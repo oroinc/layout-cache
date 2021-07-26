@@ -4,6 +4,7 @@ namespace Oro\Bundle\LayoutCacheBundle\Layout;
 
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataAccessorInterface;
+use Oro\Component\Layout\ExpressionLanguage\ClosureWithExtraParams;
 use Oro\Component\Layout\ExpressionLanguage\ExpressionProcessor;
 use Symfony\Component\ExpressionLanguage\ParsedExpression;
 
@@ -12,10 +13,7 @@ use Symfony\Component\ExpressionLanguage\ParsedExpression;
  */
 class CacheExpressionProcessor extends ExpressionProcessor
 {
-    /**
-     * @var bool
-     */
-    private $cached = false;
+    private bool $cached = false;
 
     /**
      * {@inheritDoc}
@@ -26,32 +24,15 @@ class CacheExpressionProcessor extends ExpressionProcessor
         DataAccessorInterface $data = null,
         $evaluate = true,
         $encoding = null
-    ) {
+    ): void {
         if (!$evaluate && $encoding === null) {
             return;
         }
-        if (isset($values['data']) || isset($values['context'])) {
-            throw new \InvalidArgumentException('"data" and "context" should not be used as value keys.');
-        }
-        $this->values = $values;
-        $this->processingValues = [];
-        $this->processedValues = [];
 
-        if (array_key_exists('visible', $values)) {
-            $this->visible = $values['visible'];
-            $this->processRootValue('visible', $this->visible, $context, $data, $evaluate, $encoding);
-        }
-
-        $this->cached = array_key_exists('_cached', $values) && $values['_cached'];
-
-        foreach ($values as $key => $value) {
-            if (array_key_exists($key, $this->processedValues)) {
-                $value = $this->processedValues[$key];
-            } else {
-                $this->processRootValue($key, $value, $context, $data, $evaluate, $encoding);
-            }
-            $values[$key] = $value;
-        }
+        $this->setValues($values);
+        $this->processVisibleValue($values, $context, $data, $evaluate, $encoding);
+        $this->cached = $values['_cached'] ?? false;
+        $this->processValues($values, $context, $data, $evaluate, $encoding);
     }
 
     /**
@@ -60,23 +41,43 @@ class CacheExpressionProcessor extends ExpressionProcessor
     protected function processExpression(
         ParsedExpression $expr,
         ContextInterface $context,
-        DataAccessorInterface $data = null,
-        $evaluate = true,
-        $encoding = null
+        ?DataAccessorInterface $data,
+        bool $evaluate,
+        ?string $encoding
     ) {
-        if (true === $this->cached) {
+        if ($this->cached) {
             return null;
         }
 
         return parent::processExpression($expr, $context, $data, $evaluate, $encoding);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function processClosure(\Closure $value, ContextInterface $context, ?DataAccessorInterface $data)
     {
-        if (true === $this->cached) {
+        if ($this->cached) {
             return null;
         }
 
         return parent::processClosure($value, $context, $data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function processClosureWithExtraParams(
+        ClosureWithExtraParams $value,
+        ContextInterface $context,
+        ?DataAccessorInterface $data,
+        bool $evaluate,
+        ?string $encoding
+    ) {
+        if ($this->cached) {
+            return null;
+        }
+
+        return parent::processClosureWithExtraParams($value, $context, $data, $evaluate, $encoding);
     }
 }
